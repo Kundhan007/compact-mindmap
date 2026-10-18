@@ -1,0 +1,120 @@
+.n {
+  position: absolute;
+  min-height: 22px;
+  line-height: 20px;
+  padding: 0 10px;
+  border-radius: 8px;
+  white-space: pre;
+  background: #1b1f27;
+  border: 1px solid #2e3541;
+  box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
+  min-width: 26px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition:
+    left 0.16s ease,
+    top 0.16s ease,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+.n.sel {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px rgba(255, 255, 255, 0.75),
+    0 4px 14px rgba(0, 0, 0, 0.45);
+}
+.n.root {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  background: linear-gradient(135deg, #34456b, #27324d);
+  border-color: #7aa8ff;
+  border-radius: 12px;
+  padding: 0 14px;
+  box-shadow: 0 2px 12px rgba(122, 168, 255, 0.22);
+}
+.n.root.sel {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px rgba(255, 255, 255, 0.75),
+    0 2px 12px rgba(122, 168, 255, 0.3);
+}
+.n.dt-child {
+  outline: 2px dashed #fff;
+  outline-offset: 3px;
+}
+.n.dt-sl {
+  box-shadow: -5px 0 0 #fff;
+}
+.n.dt-sr {
+  box-shadow: 5px 0 0 #fff;
+}
+.n.dt-before {
+  box-shadow: 0 -4px 0 #fff;
+}
+.n.dt-after {
+  box-shadow: 0 4px 0 #fff;
+}
+.n.ghost {
+  position: fixed !important;
+  pointer-events: none;
+  opacity: 0.85;
+  z-index: 50;
+  transition: none;
+}
+.n.col::after {
+  content: '+';
+  color: var(--acc);
+  margin-left: 6px;
+  font-weight: 600;
+}
+.n[contenteditable='plaintext-only']::after {
+  content: '\200b';
+  margin: 0;
+}
+.n[data-num]::before {
+  content: attr(data-num);
+  color: #8d97a8;
+  font-size: 10.5px;
+  margin-right: 7px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+#dots {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+.dot {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 2px solid var(--c, #9aa7bd);
+  background: var(--bg);
+  pointer-events: auto;
+  cursor: pointer;
+  transition:
+    transform 0.12s,
+    background 0.12s,
+    box-shadow 0.12s;
+  z-index: 4;
+}
+.dot:hover {
+  transform: scale(1.55);
+  background: var(--c, #9aa7bd);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+.dot.con {
+  background: var(--c, #9aa7bd);
+}
+.dot.link {
+  background: var(--c, #9aa7bd);
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.9;
+}
