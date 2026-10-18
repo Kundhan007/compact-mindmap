@@ -66,14 +66,16 @@ const when = (n) => {
   const t = m[1].replace(/T(\d\d)-(\d\d)-(\d\d)-(\d+)Z/, 'T$1:$2:$3.$4Z');
   return { d: new Date(t), tag: m[2] };
 };
-const bagOf = (r) => {
+const bagOf = (rs) => {
   const m = new Map();
-  (function w(n) {
+  const w = (n) => {
     m.set(n.t, (m.get(n.t) || 0) + 1);
     n.c.forEach(w);
-  })(r);
+  };
+  rs.forEach(w);
   return m;
 };
+const total = (bag) => [...bag.values()].reduce((a, b) => a + b, 0);
 const diffTexts = (a, b) => {
   const out = [];
   for (const [t, c] of a) {
@@ -89,20 +91,22 @@ async function openHistory() {
   const hl = $('#hl');
   hl.textContent = 'Loading…';
   const names = (await listSnaps(id)).reverse(),
-    curBag = bagOf(root);
+    curBag = bagOf(roots());
   hl.textContent = '';
   if (!names.length) hl.textContent = 'No earlier versions yet — they appear as you edit.';
   for (const n of names) {
-    let txt, snapRoot;
+    let txt, snapRoots;
     try {
       txt = await readText(snapDir(id) + '/' + n);
-      snapRoot = JSON.parse(txt).root;
+      const sd0 = JSON.parse(txt);
+      snapRoots = [sd0.root, ...(Array.isArray(sd0.more) ? sd0.more : [])];
     } catch {
       continue;
     }
-    const w = when(n),
-      back = diffTexts(bagOf(snapRoot), curBag),
-      gone = diffTexts(curBag, bagOf(snapRoot));
+    const sb = bagOf(snapRoots),
+      w = when(n),
+      back = diffTexts(sb, curBag),
+      gone = diffTexts(curBag, sb);
     const row = document.createElement('div');
     row.className = 'hr';
     const sm = (a, s) =>
@@ -129,9 +133,11 @@ async function openHistory() {
       w.tag +
       '</span>';
     row.querySelector('.df').textContent =
-      !back.length && !gone.length
+      total(sb) +
+      ' nodes · ' +
+      (!back.length && !gone.length
         ? 'same text as now'
-        : [sm(back, 'brings back '), sm(gone, 'drops ')].filter(Boolean).join(' · ');
+        : [sm(back, 'brings back '), sm(gone, 'drops ')].filter(Boolean).join(' · '));
     row.querySelector('button').onclick = () => restore(id, n);
     hl.appendChild(row);
   }
