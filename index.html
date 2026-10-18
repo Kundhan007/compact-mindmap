@@ -22,7 +22,7 @@
         <div id="dots"></div>
       </div>
       <div id="tools">
-        <button id="bs" title="New top-level subject (⌘/Ctrl+Enter)">+ Subject</button
+        <button id="bs" title="New separate subject (⌘/Ctrl+Enter); move it with ⌘/Ctrl+drag">+ Subject</button
         ><button id="bh" title="Version history">⟲ History</button
         ><button id="bb" title="Spread top-level branches evenly over both sides">⇋ Balance</button
         ><button id="bn" title="Toggle auto numbering (1, 1.1, 1.2 …)">1.2 Numbering</button>
@@ -42,7 +42,8 @@
         <div><b>Shift+Tab</b><i>go to parent</i></div>
         <div><b>Enter</b><i>edit · Enter again = sibling</i></div>
         <div><b>Shift+Enter</b><i>new line inside a node</i></div>
-        <div><b>⌘/Ctrl+Enter</b><i>new subject (top-level branch)</i></div>
+        <div><b>⌘/Ctrl+Enter</b><i>new subject (separate root)</i></div>
+        <div><b>⌘/Ctrl+drag</b><i>move a whole subject</i></div>
         <div><b>Backspace (empty)</b><i>delete + step back</i></div>
         <div><b>Type</b><i>replace text</i></div>
         <div><b>Arrows</b><i>move around</i></div>
@@ -62,6 +63,8 @@
     <script src="js/core/persistence.js"></script>
     <script src="js/core/history.js"></script>
     <script src="js/map/layout.js"></script>
+    <script src="js/map/subjects.js"></script>
+    <script src="js/map/view.js"></script>
     <script src="js/map/edit.js"></script>
     <script src="js/map/shortcuts.js"></script>
     <script src="js/map/dots.js"></script>
