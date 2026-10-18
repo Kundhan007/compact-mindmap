@@ -16,6 +16,7 @@ const PAL = [
 ];
 let uid = 1,
   root,
+  more = [], // extra subjects: separate roots on the same canvas (node.ox / node.oy = position)
   sel,
   editing = null,
   view = { x: 60, y: 0, k: 1 };
@@ -24,7 +25,18 @@ const $ = (s) => document.querySelector(s),
   world = $('#world'),
   svg = $('#lines');
 const mk = (t = '') => ({ id: uid++, t, c: [], col: false });
-function parentOf(n, r = root) {
+const roots = () => [root, ...more],
+  isRoot = (n) => n === root || more.includes(n);
+const has = (a, b) => a === b || a.c.some((c) => has(c, b)),
+  rootOf = (n) => roots().find((r) => has(r, n)) || root;
+function parentOf(n, r) {
+  if (!r) {
+    for (const x of roots()) {
+      const p = parentOf(n, x);
+      if (p) return p;
+    }
+    return null;
+  }
   for (const c of r.c) {
     if (c === n) return r;
     const p = parentOf(n, c);
@@ -37,10 +49,10 @@ const els = new Map(),
   sideOf = new Map();
 let lastColr = new Map();
 const sd = (c) => (c.side === 'l' ? 'l' : 'r'); // top-level branch side; nodes without it (older maps) sit on the right
-function assignSide(n) {
+function assignSide(n, R = parentOf(n) || root) {
   // fill 3 on the right, then 3 on the left, then keep balanced
-  const r = root.c.filter((c) => c !== n && sd(c) === 'r').length,
-    l = root.c.filter((c) => c !== n && sd(c) === 'l').length;
+  const r = R.c.filter((c) => c !== n && sd(c) === 'r').length,
+    l = R.c.filter((c) => c !== n && sd(c) === 'l').length;
   return r < 3 ? 'r' : l < 3 ? 'l' : l < r ? 'l' : 'r';
 }
 
@@ -49,22 +61,24 @@ let numbered = false; // per-map flag stored in the file; maps without it open u
 function norm() {
   // be forgiving about files edited by hand or by an AI: missing ids/children/text are repaired
   let mx = uid || 1;
-  (function w(n) {
+  for (const r0 of roots()) (function w(n) {
     if (typeof n.t !== 'string') n.t = String(n.t ?? '');
     if (!Array.isArray(n.c)) n.c = [];
     n.col = !!n.col;
     if (typeof n.id === 'number') mx = Math.max(mx, n.id + 1);
     n.c.forEach(w);
-  })(root);
-  (function w(n) {
-    if (typeof n.id !== 'number') n.id = mx++;
-    n.c.forEach(w);
-  })(root);
+  })(r0);
+  for (const r0 of roots())
+    (function w(n) {
+      if (typeof n.id !== 'number') n.id = mx++;
+      n.c.forEach(w);
+    })(r0);
   uid = mx;
 }
 function setState(d) {
   if (d && d.root) {
     root = d.root;
+    more = Array.isArray(d.more) ? d.more.filter((m) => m && typeof m === 'object') : [];
     uid = d.uid || 1;
     view = d.view || { x: 60, y: 0, k: 1 };
     sel = root;
@@ -72,6 +86,7 @@ function setState(d) {
     norm();
   } else {
     root = mk('Central idea');
+    more = [];
     sel = root;
     numbered = false;
     view = { x: stage.clientWidth / 2 - 60, y: stage.clientHeight / 2 - H / 2, k: 1 };
@@ -92,6 +107,7 @@ function lock() {
   loaded = false;
   cur = null;
   root = null;
+  more = [];
   sel = null;
   for (const e of els.values()) e.remove();
   els.clear();
