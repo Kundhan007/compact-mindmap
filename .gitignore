@@ -1,0 +1,4 @@
+old/
+*.db
+*.db-*
+.DS_Store
