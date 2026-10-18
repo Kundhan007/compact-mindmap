@@ -1,4 +1,5 @@
 // Rendering: DOM nodes, two-sided compact layout, connectors, colours, numbering, viewport.
+let lastLeaf = new Set();
 function build() {
   for (const e of els.values()) e.remove();
   els.clear();
@@ -59,16 +60,27 @@ function place() {
   pos.clear();
   sideOf.clear();
   roots().forEach(layoutRoot);
-  // colours: siblings always differ (next palette hue after the parent's); node.color overrides (Alt+1..8)
-  const colr = new Map();
-  const cc = (n, pi) =>
-    n.c.forEach((c, i) => {
+  // colours: only branches (nodes with children) get their own hue, each differing from its siblings;
+  // leaves share one plain look, their connector takes the branch colour; node.color overrides (Alt+1..8)
+  const colr = new Map(),
+    leaves = new Set();
+  const cc = (n, pi, pc) => {
+    let bi = 0;
+    n.c.forEach((c) => {
+      if (!c.c.length) {
+        if (!c.color) leaves.add(c);
+        colr.set(c, c.color || pc);
+        return;
+      }
       const own = c.color ? PAL.indexOf(c.color) : -1,
-        idx = own >= 0 ? own : (pi + 1 + i) % PAL.length;
+        idx = own >= 0 ? own : (pi + 1 + bi) % PAL.length;
+      bi++;
       colr.set(c, c.color || PAL[idx]);
-      cc(c, idx);
+      cc(c, idx, colr.get(c));
     });
-  roots().forEach((R) => cc(R, -1));
+  };
+  roots().forEach((R) => cc(R, -1, null));
+  lastLeaf = leaves;
   lastColr = colr;
   glide(colr);
   rememberSel();
@@ -81,7 +93,7 @@ function paint(P, colr) {
   let d = '';
   for (const [n, p] of P) {
     const e = els.get(n),
-      k = colr.get(n);
+      k = lastLeaf.has(n) ? null : colr.get(n);
     e.style.left = p.x + 'px';
     e.style.top = p.y + 'px';
     e.classList.toggle('sel', n === sel);
