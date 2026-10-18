@@ -59,15 +59,15 @@ function place() {
   pos.clear();
   sideOf.clear();
   roots().forEach(layoutRoot);
-  // branch colours: each top-level branch gets a palette colour, inherited down; node.color overrides (Alt+1..8)
+  // branch colours: the first level that actually branches gets a palette colour per child, inherited down; node.color overrides (Alt+1..8)
   const colr = new Map();
-  const cc = (n, inh, top) =>
+  const cc = (n, inh, top, off) =>
     n.c.forEach((c, i) => {
-      const k = c.color || (top ? PAL[i % PAL.length] : inh);
+      const k = c.color || (top ? PAL[(i + off) % PAL.length] : inh);
       colr.set(c, k);
-      cc(c, k, false);
+      cc(c, k, top && n.c.length === 1, off + 1);
     });
-  roots().forEach((R) => cc(R, null, true));
+  roots().forEach((R) => cc(R, null, true, 0));
   lastColr = colr;
   let d = '';
   for (const [n, p] of pos) {
