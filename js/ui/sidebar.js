@@ -157,7 +157,7 @@ $('#bb').onclick = () => {
   const leaves = (n) => (n.c.length && !n.col ? n.c.reduce((a, c) => a + leaves(c), 0) : 1);
   let R = 0,
     Lf = 0;
-  for (const b of root.c) {
+  for (const b of rootOf(sel).c) {
     const w = leaves(b);
     if (R <= Lf) {
       b.side = 'r';

@@ -42,9 +42,9 @@ addEventListener('mousemove', (ev) => {
   if (t && !inSub(dragging, t)) {
     const r = he.getBoundingClientRect(),
       f = (ev.clientY - r.top) / r.height;
-    dzone = t === root || (f > 0.25 && f < 0.75) ? 'child' : f <= 0.25 ? 'before' : 'after';
+    dzone = isRoot(t) || (f > 0.25 && f < 0.75) ? 'child' : f <= 0.25 ? 'before' : 'after';
     dtarget = t;
-    dside = t === root ? (ev.clientX < r.left + r.width / 2 ? 'l' : 'r') : null;
+    dside = isRoot(t) ? (ev.clientX < r.left + r.width / 2 ? 'l' : 'r') : null;
     he.classList.add('dt-' + dzone);
     if (dside) he.classList.add('dt-s' + dside);
   }
@@ -67,12 +67,12 @@ addEventListener('mouseup', () => {
       if (z === 'child') {
         t.col = false;
         t.c.push(n);
-        if (t === root) n.side = ds || assignSide(n);
+        if (isRoot(t)) n.side = ds || assignSide(n);
         else delete n.side;
       } else {
         const tp = parentOf(t);
         tp.c.splice(tp.c.indexOf(t) + (z === 'after' ? 1 : 0), 0, n);
-        if (tp === root) n.side = sd(t);
+        if (isRoot(tp)) n.side = sd(t);
         else delete n.side;
       }
       sel = n;

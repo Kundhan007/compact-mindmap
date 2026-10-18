@@ -34,7 +34,7 @@ function edit(n, atEnd) {
     } else if (ev.key === 'Escape') {
       ev.preventDefault();
       finish();
-    } else if (ev.key === 'Backspace' && !clean0(e.textContent) && n !== root && !n.c.length) {
+    } else if (ev.key === 'Backspace' && !clean0(e.textContent) && !isRoot(n) && !n.c.length) {
       // empty node: drop it, land on the previous node in reading order
       ev.preventDefault();
       editing = null;
@@ -98,8 +98,17 @@ function newline(n) {
   place();
 }
 function subject() {
-  sel = root; // new top-level branch off the root, from anywhere
-  child();
+  // a new separate root below everything; move it later with Cmd/Ctrl+drag
+  let y = 0;
+  for (const [n, p] of pos) y = Math.max(y, p.y + p.h);
+  const n = mk();
+  n.ox = 0;
+  n.oy = y + 60;
+  more.push(n);
+  sel = n;
+  build();
+  edit(n);
+  reveal();
 }
 function finish() {
   const n = editing;
@@ -112,7 +121,7 @@ function finish() {
     n.t = clean0(e.textContent).trim();
     e.textContent = n.t;
   }
-  if (!n.t && n !== root && !n.c.length) {
+  if (!n.t && !isRoot(n) && !n.c.length) {
     const p = parentOf(n);
     p.c.splice(p.c.indexOf(n), 1);
     sel = p;
@@ -123,7 +132,7 @@ function child(side) {
   if (sel.col) sel.col = false;
   const n = mk();
   sel.c.push(n);
-  if (sel === root) n.side = side || assignSide(n);
+  if (isRoot(sel)) n.side = side || assignSide(n);
   sel = n;
   build();
   edit(n);
@@ -134,7 +143,7 @@ function siblingBefore() {
   if (!p) return child();
   const n = mk();
   p.c.splice(p.c.indexOf(sel), 0, n);
-  if (p === root) n.side = sd(sel);
+  if (isRoot(p)) n.side = sd(sel);
   sel = n;
   build();
   edit(n);
@@ -145,7 +154,7 @@ function sibling() {
   if (!p) return child();
   const n = mk();
   p.c.splice(p.c.indexOf(sel) + 1, 0, n);
-  if (p === root) n.side = sd(sel);
+  if (isRoot(p)) n.side = sd(sel);
   sel = n;
   build();
   edit(n);
@@ -154,9 +163,15 @@ function sibling() {
 function del() {
   const p = parentOf(sel);
   if (!p) {
+    if (sel !== root) {
+      more.splice(more.indexOf(sel), 1);
+      sel = root;
+      build();
+      reveal();
+      return;
+    }
     root.c = [];
     root.t = '';
-    sel = root;
     build();
     edit(root);
     return;

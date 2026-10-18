@@ -6,7 +6,7 @@ function hideDots() {
   dotNode = null;
 }
 function dotAction(n, type, side) {
-  if (n !== root && !parentOf(n)) return;
+  if (!isRoot(n) && !parentOf(n)) return;
   sel = n;
   if (type === 'child') child(side);
   else if (type === 'before') siblingBefore();
@@ -23,14 +23,14 @@ function showDots(n) {
     col = lastColr.get(n) || '#7aa8ff',
     o = 13,
     list = [];
-  if (n === root) {
+  if (isRoot(n)) {
     list.push({
       x: p.x - o,
       y: cy,
       t: 'child',
       s: 'l',
       tip: 'Add branch on the left',
-      con: root.c.some((c) => sd(c) === 'l'),
+      con: n.c.some((c) => sd(c) === 'l'),
     });
     list.push({
       x: p.x + w + o,
@@ -38,7 +38,7 @@ function showDots(n) {
       t: 'child',
       s: 'r',
       tip: 'Add branch on the right',
-      con: root.c.some((c) => sd(c) === 'r'),
+      con: n.c.some((c) => sd(c) === 'r'),
     });
   } else {
     const out = side === 'l' ? -1 : 1;

@@ -6,14 +6,14 @@ function nav(k) {
     if (p) sel = p;
   } else if (k === 'ArrowLeft' || k === 'ArrowRight') {
     // "away from the root" is Left on the left side, Right on the right side
-    const toChild = sel === root || (k === 'ArrowLeft') === (sideOf.get(sel) === 'l');
+    const toChild = isRoot(sel) || (k === 'ArrowLeft') === (sideOf.get(sel) === 'l');
     if (!toChild) {
       if (p) sel = p;
     } else if (sel.col) {
       sel.col = false;
       build();
     } else {
-      const want = sel === root ? (k === 'ArrowLeft' ? 'l' : 'r') : null,
+      const want = isRoot(sel) ? (k === 'ArrowLeft' ? 'l' : 'r') : null,
         cands = want ? sel.c.filter((c) => sd(c) === want) : sel.c;
       if (cands.length) {
         const m = memo.get(sel);
@@ -24,7 +24,8 @@ function nav(k) {
     const me = pos.get(sel),
       dir = k === 'ArrowDown' ? 1 : -1,
       d = me.d,
-      sm = (n) => sel === root || sideOf.get(n) === sideOf.get(sel);
+      sm = (n) =>
+        rootOf(n) === rootOf(sel) && (isRoot(sel) || sideOf.get(n) === sideOf.get(sel));
     const same = [...pos]
       .filter(([n, q]) => q.d === d && sm(n))
       .sort((a, b) => a[1].y - b[1].y)
@@ -70,7 +71,7 @@ addEventListener('keydown', (ev) => {
   }
   if (ev.altKey && (k === 'ArrowLeft' || k === 'ArrowRight')) {
     ev.preventDefault(); // send a top-level branch straight to the other side
-    if (parentOf(sel) === root) {
+    if (isRoot(parentOf(sel))) {
       sel.side = k === 'ArrowLeft' ? 'l' : 'r';
       build();
       reveal();
@@ -84,7 +85,7 @@ addEventListener('keydown', (ev) => {
       const st = k === 'ArrowUp' ? -1 : 1,
         i = p.c.indexOf(sel);
       let j = i + st;
-      if (p === root) while (j >= 0 && j < p.c.length && sd(p.c[j]) !== sd(sel)) j += st;
+      if (isRoot(p)) while (j >= 0 && j < p.c.length && sd(p.c[j]) !== sd(sel)) j += st;
       if (j >= 0 && j < p.c.length) {
         [p.c[i], p.c[j]] = [p.c[j], p.c[i]];
         build();
@@ -181,7 +182,7 @@ document.addEventListener('paste', (e) => {
   sel.col = false;
   for (const x of nodes) {
     sel.c.push(x);
-    if (sel === root) x.side = assignSide(x);
+    if (isRoot(sel)) x.side = assignSide(x);
   }
   sel = nodes[0];
   build();
@@ -192,7 +193,7 @@ function dup() {
   if (!p) return;
   const o = graft(strip(sel));
   p.c.splice(p.c.indexOf(sel) + 1, 0, o);
-  if (p === root) o.side = sd(sel);
+  if (isRoot(p)) o.side = sd(sel);
   sel = o;
   build();
   reveal();
