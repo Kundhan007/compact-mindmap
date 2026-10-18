@@ -81,7 +81,7 @@ stage.addEventListener('mousemove', (ev) => {
   }
   const r = stage.getBoundingClientRect(),
     wx = (ev.clientX - r.left - view.x) / view.k,
-    wy = (ev.clientY - view.y) / view.k,
+    wy = (ev.clientY - r.top - view.y) / view.k,
     m = 26;
   let best = null,
     bd = 1e9;
