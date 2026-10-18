@@ -100,5 +100,6 @@ function place() {
       }
   }
   svg.innerHTML = d;
+  rememberSel();
   save();
 }

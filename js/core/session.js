@@ -121,6 +121,7 @@ async function openMap(id) {
   loaded = false;
   cur = id;
   localStorage.mmLast = id; // a refresh reopens the same map
+  const want = +localStorage['mmSel:' + kp(id)];
   let d = null,
     local = null;
   try {
@@ -152,6 +153,7 @@ async function openMap(id) {
   renderTree();
   build();
   apply();
+  restoreUI(want);
   if (fresh) {
     save();
     edit(root);
