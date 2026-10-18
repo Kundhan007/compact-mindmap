@@ -146,6 +146,11 @@ $('#bi').onclick = async () => {
   await rescan();
 };
 
+$('#bs').onclick = () => {
+  if (!loaded || !cur || !root) return;
+  finish();
+  subject();
+};
 $('#bb').onclick = () => {
   // even out the two sides by leaf count; order inside each side is kept
   if (!loaded || !cur || !root) return;
