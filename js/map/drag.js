@@ -48,6 +48,10 @@ addEventListener('mousemove', (ev) => {
     he.classList.add('dt-' + dzone);
     if (dside) he.classList.add('dt-s' + dside);
   }
+  if (dtarget) {
+    showDots(dtarget); // the dots belong to the incoming node, not the dragged one
+    dotsEl.classList.add('dd');
+  } else hideDots();
 });
 addEventListener('mouseup', () => {
   if (dragging) {

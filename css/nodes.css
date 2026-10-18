@@ -118,3 +118,6 @@
   cursor: default;
   opacity: 0.9;
 }
+#dots.dd .dot {
+  pointer-events: none;
+}

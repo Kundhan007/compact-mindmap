@@ -3,6 +3,7 @@ const dotsEl = $('#dots');
 let dotNode = null;
 function hideDots() {
   dotsEl.innerHTML = '';
+  dotsEl.classList.remove('dd');
   dotNode = null;
 }
 function dotAction(n, type, side) {
