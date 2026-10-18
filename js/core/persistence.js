@@ -121,6 +121,7 @@ let timer = null,
   running = false;
 function save() {
   if (!loaded || !cur) return;
+  trackUndo();
   const s = JSON.stringify({ root, more, uid, view, numbered });
   localStorage['mm:' + kp(cur)] = s;
   localStorage['mmD:' + kp(cur)] = '1';
