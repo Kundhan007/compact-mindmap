@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mindmap</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/nodes.css" />
+    <link rel="stylesheet" href="css/panels.css" />
+  </head>
+  <body>
+    <div id="sb">
+      <div id="bar">
+        <button id="bm">+ Map</button><button id="bf">+ Folder</button><button id="bi">Import</button
+        ><button id="br" class="sm" title="Rescan folder">↻</button>
+      </div>
+      <div id="tree"></div>
+      <div id="status"></div>
+    </div>
+    <div id="stage">
+      <div id="world">
+        <svg id="lines"></svg>
+        <div id="dots"></div>
+      </div>
+      <div id="tools">
+        <button id="bh" title="Version history">⟲ History</button
+        ><button id="bb" title="Spread top-level branches evenly over both sides">⇋ Balance</button
+        ><button id="bn" title="Toggle auto numbering (1, 1.1, 1.2 …)">1.2 Numbering</button>
+      </div>
+      <div id="lock"><span id="lockmsg"></span><button id="lockbtn" style="display: none"></button></div>
+    </div>
+    <div id="hist" style="display: none">
+      <div id="hbox">
+        <div id="hh"><b>Version history</b><span id="hx">×</span></div>
+        <div id="hl"></div>
+      </div>
+    </div>
+    <div id="help">
+      <span>⌨ Shortcuts</span>
+      <div id="hp">
+        <div><b>Tab</b><i>child</i></div>
+        <div><b>Shift+Tab</b><i>go to parent</i></div>
+        <div><b>Enter</b><i>edit · Enter again = sibling</i></div>
+        <div><b>Shift+Enter</b><i>new line inside a node</i></div>
+        <div><b>Backspace (empty)</b><i>delete + step back</i></div>
+        <div><b>Type</b><i>replace text</i></div>
+        <div><b>Arrows</b><i>move around</i></div>
+        <div><b>Alt+↑ / Alt+↓</b><i>move up / down among siblings</i></div>
+        <div><b>Alt+← / Alt+→</b><i>send top branch to left / right</i></div>
+        <div><b>Space</b><i>fold / unfold</i></div>
+        <div><b>Del</b><i>delete branch</i></div>
+        <div><b>Drag</b><i>move branch (middle = child, edge = sibling)</i></div>
+        <div><b>⌘C / ⌘V</b><i>copy / paste branch</i></div>
+        <div><b>⌘D or ⌘⇧C</b><i>duplicate</i></div>
+        <div><b>Alt+1…8 / Alt+0</b><i>colour / reset</i></div>
+        <div><b>0</b><i>fit to screen</i></div>
+        <div><b>⌘B</b><i>toggle sidebar</i></div>
+      </div>
+    </div>
+    <script src="js/core/session.js"></script>
+    <script src="js/core/persistence.js"></script>
+    <script src="js/core/history.js"></script>
+    <script src="js/map/layout.js"></script>
+    <script src="js/map/edit.js"></script>
+    <script src="js/map/shortcuts.js"></script>
+    <script src="js/map/dots.js"></script>
+    <script src="js/map/drag.js"></script>
+    <script src="js/ui/sidebar.js"></script>
+  </body>
+</html>
