@@ -5,15 +5,15 @@ const GX = 28,
   H = 22,
   EXT = '.kundhan'; // plain JSON content, own extension
 const PAL = [
-  '#ff6b6b',
-  '#ffa94d',
-  '#ffd43b',
-  '#69db7c',
-  '#38d9a9',
-  '#4dabf7',
-  '#9775fa',
-  '#f783ac',
-];
+  '#e8683a',
+  '#56b4e9',
+  '#f0e442',
+  '#9b8ce8',
+  '#2fc4a0',
+  '#d98bb8',
+  '#f0a830',
+  '#5b8def',
+]; // Okabe-Ito hues lightened for dark backgrounds, ordered warm/cool so neighbours contrast
 let uid = 1,
   root,
   more = [], // extra subjects: separate roots on the same canvas (node.ox / node.oy = position)
@@ -61,13 +61,14 @@ let numbered = false; // per-map flag stored in the file; maps without it open u
 function norm() {
   // be forgiving about files edited by hand or by an AI: missing ids/children/text are repaired
   let mx = uid || 1;
-  for (const r0 of roots()) (function w(n) {
-    if (typeof n.t !== 'string') n.t = String(n.t ?? '');
-    if (!Array.isArray(n.c)) n.c = [];
-    n.col = !!n.col;
-    if (typeof n.id === 'number') mx = Math.max(mx, n.id + 1);
-    n.c.forEach(w);
-  })(r0);
+  for (const r0 of roots())
+    (function w(n) {
+      if (typeof n.t !== 'string') n.t = String(n.t ?? '');
+      if (!Array.isArray(n.c)) n.c = [];
+      n.col = !!n.col;
+      if (typeof n.id === 'number') mx = Math.max(mx, n.id + 1);
+      n.c.forEach(w);
+    })(r0);
   for (const r0 of roots())
     (function w(n) {
       if (typeof n.id !== 'number') n.id = mx++;
