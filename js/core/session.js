@@ -120,6 +120,7 @@ async function openMap(id) {
   await flush();
   loaded = false;
   cur = id;
+  localStorage.mmLast = id; // a refresh reopens the same map
   let d = null,
     local = null;
   try {
@@ -164,6 +165,8 @@ async function connect() {
       pending.set(i.id, localStorage['mm:' + kp(i.id)]);
     } // unsynced from last session
   if (pending.size) flush();
+  const last = localStorage.mmLast;
+  if (last && items.some((i) => i.type === 'map' && i.id === last)) return openMap(last);
   lock();
 }
 async function chooseFolder() {
