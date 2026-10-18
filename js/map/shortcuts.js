@@ -106,8 +106,9 @@ addEventListener('keydown', (ev) => {
     ev.shiftKey ? nav('Parent') : child();
   } else if (k === 'Enter') {
     ev.preventDefault();
-    edit(sel, true);
-  } // first Enter goes into the box; Enter again (while editing) adds a sibling
+    if (ev.metaKey || ev.ctrlKey) subject();
+    else edit(sel, true), ev.shiftKey && newline(sel);
+  }
   else if (k === 'F2') {
     ev.preventDefault();
     edit(sel);

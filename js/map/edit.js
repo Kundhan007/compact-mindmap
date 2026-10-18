@@ -18,29 +18,12 @@ function edit(n, atEnd) {
   e.onkeydown = (ev) => {
     if (ev.key === 'Enter' && ev.shiftKey) {
       ev.preventDefault();
-      {
-        const sl = getSelection();
-        if (sl.rangeCount) {
-          const r = sl.getRangeAt(0);
-          r.deleteContents();
-          const atEnd = !(() => {
-            const q = document.createRange();
-            q.selectNodeContents(e);
-            q.setStart(r.endContainer, r.endOffset);
-            return q.toString();
-          })();
-          const tn = document.createTextNode(atEnd ? '\n\u200b' : '\n'); // zero-width char keeps a valid caret spot on the new last line
-          r.insertNode(tn);
-          r.setStart(tn, 1);
-          r.collapse(true);
-          sl.removeAllRanges();
-          sl.addRange(r);
-        }
-        n.t = clean0(e.textContent);
-        place();
-      }
-    } // new line inside the node
-    else if (ev.key === 'Enter') {
+      newline(n);
+    } else if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) {
+      ev.preventDefault();
+      finish();
+      subject();
+    } else if (ev.key === 'Enter') {
       ev.preventDefault();
       finish();
       sibling();
@@ -94,6 +77,29 @@ function edit(n, atEnd) {
   e.onblur = () => {
     if (editing === n) finish();
   };
+}
+function newline(n) {
+  const e = els.get(n),
+    sl = getSelection();
+  if (sl.rangeCount) {
+    const r = sl.getRangeAt(0);
+    r.deleteContents();
+    const q = document.createRange();
+    q.selectNodeContents(e);
+    q.setStart(r.endContainer, r.endOffset);
+    const tn = document.createTextNode(q.toString() ? '\n' : '\n​'); // zero-width char keeps a caret spot on a new last line
+    r.insertNode(tn);
+    r.setStart(tn, 1);
+    r.collapse(true);
+    sl.removeAllRanges();
+    sl.addRange(r);
+  }
+  n.t = clean0(e.textContent);
+  place();
+}
+function subject() {
+  sel = root; // new top-level branch off the root, from anywhere
+  child();
 }
 function finish() {
   const n = editing;
