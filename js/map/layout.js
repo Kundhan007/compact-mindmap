@@ -69,8 +69,16 @@ function place() {
     });
   roots().forEach((R) => cc(R, null, true, 0));
   lastColr = colr;
+  glide(colr);
+  rememberSel();
+  save();
+}
+// Motion: nodes and connectors glide to their new place instead of jumping (rebuilds keep the old positions in `shown`).
+const shown = new Map();
+let raf = 0;
+function paint(P, colr) {
   let d = '';
-  for (const [n, p] of pos) {
+  for (const [n, p] of P) {
     const e = els.get(n),
       k = colr.get(n);
     e.style.left = p.x + 'px';
@@ -88,7 +96,7 @@ function place() {
     }
     if (!n.col)
       for (const c of n.c) {
-        const q = pos.get(c),
+        const q = P.get(c),
           L = sideOf.get(c) === 'l',
           x1 = L ? p.x - 2 : p.x + e.offsetWidth + 2,
           y1 = p.y + p.h / 2,
@@ -100,6 +108,38 @@ function place() {
       }
   }
   svg.innerHTML = d;
-  rememberSel();
-  save();
+}
+function glide(colr) {
+  cancelAnimationFrame(raf);
+  const from = new Map();
+  let moving = false;
+  for (const [n, p] of pos) {
+    const s = shown.get(n);
+    from.set(n, s || p);
+    if (s && (Math.abs(s.x - p.x) > 0.5 || Math.abs(s.y - p.y) > 0.5)) moving = true;
+  }
+  const keep = (P) => {
+    shown.clear();
+    for (const [n, p] of P) shown.set(n, { x: p.x, y: p.y });
+  };
+  if (!moving || editing || subjDrag || document.hidden) {
+    paint(pos, colr);
+    keep(pos);
+    return;
+  }
+  paint(new Map([...pos].map(([n, p]) => [n, { ...p, ...from.get(n) }])), colr); // new elements start where the old ones were
+  const t0 = performance.now();
+  const step = (now) => {
+    const u = Math.min(1, (now - t0) / 170),
+      e = 1 - Math.pow(1 - u, 3),
+      P = new Map();
+    for (const [n, p] of pos) {
+      const f = from.get(n);
+      P.set(n, { x: f.x + (p.x - f.x) * e, y: f.y + (p.y - f.y) * e, d: p.d, h: p.h });
+    }
+    paint(P, colr);
+    keep(P);
+    if (u < 1) raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
 }
