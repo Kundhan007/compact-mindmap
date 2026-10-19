@@ -132,20 +132,31 @@ addEventListener('mouseup', () => {
     save();
   }
 });
+function zoomAt(px, py, want) {
+  const cx = px - stage.getBoundingClientRect().left,
+    k = Math.min(3, Math.max(0.2, want)),
+    r = k / view.k;
+  view.x = cx - (cx - view.x) * r;
+  view.y = py - (py - view.y) * r;
+  view.k = k;
+}
+let pinch0 = 1; // Safari / WebKit reports trackpad pinch as gesture events, not ctrl+wheel
+stage.addEventListener('gesturestart', (e) => {
+  e.preventDefault();
+  pinch0 = view.k;
+});
+stage.addEventListener('gesturechange', (e) => {
+  e.preventDefault();
+  zoomAt(e.clientX, e.clientY, pinch0 * e.scale);
+  apply();
+  save();
+});
 stage.addEventListener(
   'wheel',
   (e) => {
     e.preventDefault();
     if (e.ctrlKey || e.metaKey) {
-      const L = stage.getBoundingClientRect().left,
-        cx = e.clientX - L,
-        cy = e.clientY;
-      const f = Math.exp(-e.deltaY * 0.01),
-        k = Math.min(3, Math.max(0.2, view.k * f)),
-        r = k / view.k;
-      view.x = cx - (cx - view.x) * r;
-      view.y = cy - (cy - view.y) * r;
-      view.k = k;
+      zoomAt(e.clientX, e.clientY, view.k * Math.exp(-e.deltaY * 0.01));
     } else {
       view.x -= e.deltaX;
       view.y -= e.deltaY;
