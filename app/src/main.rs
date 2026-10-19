@@ -6,6 +6,7 @@ use store::{data_dir, Store};
 use tao::dpi::{LogicalSize, PhysicalPosition, PhysicalSize};
 use tao::event::{Event, WindowEvent};
 use tao::event_loop::{ControlFlow, EventLoopBuilder};
+use tao::platform::macos::{ActivationPolicy, EventLoopExtMacOS};
 use tao::window::WindowBuilder;
 use wry::http::{Response, StatusCode};
 use wry::WebViewBuilder;
@@ -52,10 +53,17 @@ fn read_bounds() -> Option<(i32, i32, u32, u32)> {
 }
 
 fn main() {
-    let ev = EventLoopBuilder::<Msg>::with_user_event().build();
+    // test runs (MM_TEST_JS) are headless: no window, no Dock icon, no focus stealing
+    let test = std::env::var("MM_TEST_JS").is_ok();
+    let mut ev = EventLoopBuilder::<Msg>::with_user_event().build();
+    if test {
+        ev.set_activation_policy(ActivationPolicy::Accessory);
+        ev.set_activate_ignoring_other_apps(false); // tao otherwise grabs focus on launch
+    }
     let proxy = ev.create_proxy();
     let mut wb = WindowBuilder::new()
         .with_title("Mindmap")
+        .with_visible(!test)
         .with_inner_size(LogicalSize::new(1440.0, 900.0))
         .with_min_inner_size(LogicalSize::new(600.0, 400.0));
     if let Some((x, y, w, h)) = read_bounds() {
