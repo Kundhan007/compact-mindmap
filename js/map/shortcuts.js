@@ -1,7 +1,9 @@
 // Keyboard input: navigation, shortcuts, copy / paste / duplicate.
 const memo = new Map(); // parent -> child last visited (so Right returns where Left came from)
 function nav(k) {
-  const p = parentOf(sel);
+  const p = parentOf(sel),
+    from = sel,
+    wasCol = sel.col;
   if (k === 'Parent') {
     if (p) sel = p;
   } else if (k === 'ArrowLeft' || k === 'ArrowRight') {
@@ -48,6 +50,7 @@ function nav(k) {
       if (best) sel = best;
     }
   }
+  if (sel === from && sel.col === wasCol) hopSubject(k);
   const pp = parentOf(sel);
   if (pp) memo.set(pp, sel);
   select(sel);

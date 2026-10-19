@@ -52,6 +52,31 @@ function layoutRoot(R) {
     q.x += R.ox || 0;
   }
 }
+function hopSubject(k) {
+  // nothing left to visit inside this subject: jump to the nearest node of another subject in that direction
+  const mine = rootOf(sel),
+    horiz = k === 'ArrowLeft' || k === 'ArrowRight',
+    sign = k === 'ArrowLeft' || k === 'ArrowUp' ? -1 : 1,
+    mid = (n) => {
+      const p = pos.get(n);
+      return { x: p.x + els.get(n).offsetWidth / 2, y: p.y + p.h / 2 };
+    },
+    a = mid(sel);
+  let best = null,
+    bs = 1e9;
+  for (const n of pos.keys()) {
+    if (rootOf(n) === mine) continue;
+    const b = mid(n),
+      along = (horiz ? b.x - a.x : b.y - a.y) * sign,
+      across = Math.abs(horiz ? b.y - a.y : b.x - a.x);
+    if (along <= 0) continue;
+    if (along + across * 1.5 < bs) {
+      bs = along + across * 1.5;
+      best = n;
+    }
+  }
+  if (best) sel = best;
+}
 addEventListener('mousemove', (ev) => {
   if (!subjDrag) return;
   const d = subjDrag;
