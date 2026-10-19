@@ -77,6 +77,7 @@ const nativeRoot = async () => {
   return p ? new NDir('', p.split('/').pop()) : null;
 };
 if (NATIVE) {
+  addEventListener('keydown', (e) => e.metaKey && e.key === 'r' && location.reload()); // pick up edited page files
   window.showDirectoryPicker = async () => {
     const p = await nfs('pick');
     if (!p) throw dom('AbortError');
