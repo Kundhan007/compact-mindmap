@@ -143,7 +143,7 @@ async function openHistory() {
   }
 }
 async function restore(id, name) {
-  if (!confirm('Restore this version? The current one is saved to history first.')) return;
+  if (!(await okay('Restore this version? The current one is saved to history first.'))) return;
   await flush();
   const snap = await readText(snapDir(id) + '/' + name),
     curTxt = await readText(id).catch(() => null);

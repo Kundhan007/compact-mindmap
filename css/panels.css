@@ -189,3 +189,61 @@
   color: var(--mut);
   text-align: right;
 }
+#dlg {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 6, 8, 0.6);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#dlg > div {
+  width: 340px;
+  max-width: 90vw;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+#dlg p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--txt);
+  white-space: pre-wrap;
+}
+#dlg input {
+  background: var(--bg);
+  color: var(--txt);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+#dlg input:focus {
+  border-color: var(--acc);
+}
+#dlg span {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+#dlg button {
+  background: #1d2740;
+  color: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+#dlg button:last-child {
+  border-color: var(--acc);
+}

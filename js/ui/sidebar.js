@@ -56,39 +56,43 @@ async function move(id, parent) {
   try {
     await moveEntry(it, parent || '');
   } catch (e) {
-    alert('Move failed: ' + e.message);
+    await tell('Move failed: ' + e.message);
   }
 }
 async function rename(i) {
   if (i.type === 'folder') {
-    alert('Rename folders in Finder, then press ↻');
+    await tell('Rename folders in Finder, then press ↻');
     return;
   }
-  const n = clean(prompt('Rename', i.name) || '');
+  const n = clean((await ask('Rename', i.name)) || '');
   if (!n || n === i.name) return;
   try {
     await moveEntry(i, i.parent || '', n + EXT);
   } catch (e) {
-    alert('Rename failed: ' + e.message);
+    await tell('Rename failed: ' + e.message);
   }
 }
 async function remove(i) {
-  if (!confirm(`Move "${i.name}"${i.type === 'folder' ? ' and everything inside' : ''} to .trash?`))
+  if (
+    !(await okay(
+      `Move "${i.name}"${i.type === 'folder' ? ' and everything inside' : ''} to .trash?`,
+    ))
+  )
     return;
   try {
     await moveEntry(i, '.trash', Date.now() + '-' + split(i.id)[1]);
   } catch (e) {
-    alert('Delete failed: ' + e.message);
+    await tell('Delete failed: ' + e.message);
   }
 }
 async function newItem(type, name) {
   if (!rootH) return null;
   const nm = clean(
     name ||
-      prompt(
+      (await ask(
         type === 'folder' ? 'Folder name' : 'Map name',
         type === 'folder' ? 'New folder' : 'Untitled',
-      ) ||
+      )) ||
       '',
   );
   if (!nm) return null;
@@ -136,7 +140,7 @@ $('#bi').onclick = async () => {
     try {
       if (!JSON.parse(txt).root) throw 0;
     } catch {
-      alert(fh.name + ': not a mindmap file');
+      await tell(fh.name + ': not a mindmap file');
       continue;
     }
     const fn = await uniq(dir, clean(fh.name.replace(/\.(kundhan|json)$/, '')) + EXT);
