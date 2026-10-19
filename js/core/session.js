@@ -178,16 +178,16 @@ async function chooseFolder() {
   } catch {
     return;
   }
-  await kvSet('root', rootH);
+  if (!NATIVE) await kvSet('root', rootH);
   await connect();
 }
 
 addEventListener('load', async () => {
-  if (!('showDirectoryPicker' in window)) {
+  if (!NATIVE && !('showDirectoryPicker' in window)) {
     lockUI('This needs Chrome or Edge (File System Access API).');
     return;
   }
-  rootH = await kvGet('root');
+  rootH = NATIVE ? await nativeRoot() : await kvGet('root');
   if (!rootH)
     return lockUI(
       'Choose a folder to keep your mind maps in (each map is a .kundhan file)',
