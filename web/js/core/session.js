@@ -162,7 +162,18 @@ async function openMap(id) {
 }
 async function connect() {
   status('folder: ' + rootH.name);
-  await rescan();
+  try {
+    await rescan();
+  } catch (e) {
+    const gone = /no such file/i.test(e.message);
+    return lockUI(
+      gone
+        ? `The folder "${rootH.name}" is gone`
+        : `Can't open "${rootH.name}" yet. Allow access if macOS asks`,
+      gone ? 'Choose folder' : 'Try again',
+      gone ? chooseFolder : connect,
+    );
+  }
   for (const i of items)
     if (i.type === 'map' && localStorage['mmD:' + kp(i.id)]) {
       pending.set(i.id, localStorage['mm:' + kp(i.id)]);
