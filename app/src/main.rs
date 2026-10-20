@@ -20,6 +20,10 @@ fn web_dir() -> PathBuf {
     if let Ok(p) = std::env::var("MM_WEB") {
         return PathBuf::from(p);
     }
+    let live = data_dir().join("web"); // page code kept outside the signed app, so edits never change its signature
+    if live.join("index.html").is_file() {
+        return live;
+    }
     let exe = std::env::current_exe().unwrap_or_default();
     exe.parent().and_then(|p| p.parent()).map(|p| p.join("Resources/web")).unwrap_or_default()
 }
@@ -109,14 +113,14 @@ fn main() {
         match event {
             Event::UserEvent(Msg::Reply(js)) => { let _ = webview.evaluate_script(&js); }
             Event::UserEvent(Msg::Quit) => *flow = ControlFlow::Exit,
-            Event::WindowEvent { event: WindowEvent::CloseRequested, .. } => {
+            Event::WindowEvent { event: WindowEvent::Resized(_) | WindowEvent::Moved(_), .. } => {
                 if let (Ok(p), s) = (window.outer_position(), window.inner_size()) {
                     let _ = fs::create_dir_all(data_dir());
                     let b = format!("{},{},{},{}", p.x, p.y, s.width, s.height);
                     let _ = fs::write(data_dir().join("window.txt"), b);
                 }
-                *flow = ControlFlow::Exit
             }
+            Event::WindowEvent { event: WindowEvent::CloseRequested, .. } => *flow = ControlFlow::Exit,
             _ => {}
         }
     });
