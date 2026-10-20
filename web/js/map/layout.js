@@ -2,9 +2,11 @@
 const paths = new Map(),
   pathEl = Object.assign(document.createElement('div'), { id: 'path' });
 world.appendChild(pathEl);
+let hover = null; // node under the pointer
 function build() {
   for (const e of els.values()) e.remove();
   els.clear();
+  hover = null;
   const w = (n) => {
     const e = document.createElement('div');
     e.className = 'n';
@@ -36,6 +38,14 @@ function build() {
     e.ondblclick = () => {
       if (editing !== n) edit(n);
     };
+    e.onmouseenter = () => {
+      hover = n;
+      showPath(shown.size ? shown : pos);
+    };
+    e.onmouseleave = () => {
+      if (hover === n) hover = null;
+      showPath();
+    };
     world.appendChild(e);
     els.set(n, e);
     if (!n.col) n.c.forEach(w);
@@ -46,7 +56,7 @@ function build() {
 function place() {
   hideDots();
   // numbering is display-only: a node shows its place among siblings (data-num -> CSS ::before),
-  // the full path shows above the selected node; node text is never modified
+  // the full path shows above the hovered node (see showPath); node text is never modified
   const num = new Map();
   paths.clear();
   const nn = (n, pre) =>
@@ -123,13 +133,18 @@ function paint(P, colr) {
       }
   }
   svg.innerHTML = d;
-  const sp = sel && P.get(sel),
-    pt = paths.get(sel);
-  pathEl.style.display = numbered && sp && pt && pt.includes('.') && !editing ? 'block' : 'none';
-  if (sp) {
+  showPath(P);
+}
+function showPath(P = pos) {
+  // the full path appears only while the pointer is over a node
+  const p = hover && P.get(hover),
+    pt = paths.get(hover),
+    on = numbered && p && pt && pt.includes('.') && !editing && !dragging && !dragInit && !subjDrag;
+  pathEl.style.display = on ? 'block' : 'none';
+  if (on) {
     pathEl.textContent = pt;
-    pathEl.style.left = sp.x + 'px';
-    pathEl.style.top = sp.y - 24 + 'px';
+    pathEl.style.left = p.x + 'px';
+    pathEl.style.top = p.y - 24 + 'px';
   }
 }
 function glide(colr) {

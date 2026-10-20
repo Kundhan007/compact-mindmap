@@ -4,6 +4,7 @@ let committed = null; // node just left with Enter: the next Enter adds a siblin
 function edit(n, atEnd) {
   editing = n;
   committed = null;
+  showPath();
   const e = els.get(n);
   e.contentEditable = 'plaintext-only';
   e.focus();
