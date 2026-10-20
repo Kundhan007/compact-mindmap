@@ -23,7 +23,7 @@ fn bad(m: &str) -> io::Error {
 impl Store {
     pub fn load() -> Store {
         let cfg = data_dir().join("root.txt");
-        let root = fs::read_to_string(&cfg).ok().map(PathBuf::from).filter(|p| p.is_dir());
+        let root = fs::read_to_string(&cfg).ok().map(PathBuf::from);
         Store { root, cfg }
     }
 
