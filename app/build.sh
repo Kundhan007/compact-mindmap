@@ -1,10 +1,10 @@
 #!/bin/bash
-# ./build.sh builds ~/Applications/Mindmap.app; ./build.sh web only updates the page code (the app is not re-signed)
+# ./build.sh builds ~/Applications/Mindmap.app; ./build.sh web only relinks the page code (the app is not re-signed)
 set -e
 cd "$(dirname "$0")"
 export PATH="$HOME/.cargo/bin:$PATH"
 APP="${APP:-$HOME/Applications/Mindmap.app}"
-LIVE="${LIVE:-$HOME/Library/Application Support/Mindmap/web}" # page code is read from here first
+LIVE="${LIVE:-$HOME/Library/Application Support/Mindmap/web}" # page code is read from here first: a link to ../web, so edits show on the next reload or restart
 if [ "$1" != "web" ]; then
   cargo build --release
   mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
@@ -19,6 +19,6 @@ if [ "$1" != "web" ]; then
   codesign --force --sign - -r='designated => identifier "local.kundhan.mindmap"' "$APP"
 fi
 rm -rf "$LIVE"
-mkdir -p "$LIVE"
-cp -R ../web/. "$LIVE/"
+mkdir -p "$(dirname "$LIVE")"
+ln -s "$(cd ../web && pwd)" "$LIVE"
 echo "built $APP"
