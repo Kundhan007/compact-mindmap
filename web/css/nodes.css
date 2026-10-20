@@ -98,6 +98,20 @@ body.dragging * {
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
+#path {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 10.5px;
+  line-height: 16px;
+  padding: 0 6px;
+  color: #cfd6e4;
+  background: #1b1f27;
+  border: 1px solid #2e3541;
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
 #dots {
   position: absolute;
   left: 0;
