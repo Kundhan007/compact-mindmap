@@ -1,4 +1,7 @@
 // Rendering: DOM nodes, two-sided compact layout, connectors, colours, numbering, viewport.
+const paths = new Map(),
+  pathEl = Object.assign(document.createElement('div'), { id: 'path' });
+world.appendChild(pathEl);
 function build() {
   for (const e of els.values()) e.remove();
   els.clear();
@@ -42,12 +45,15 @@ function build() {
 }
 function place() {
   hideDots();
-  // numbering is display-only (data-num -> CSS ::before); node text is never modified
+  // numbering is display-only: a node shows its place among siblings (data-num -> CSS ::before),
+  // the full path shows above the selected node; node text is never modified
   const num = new Map();
+  paths.clear();
   const nn = (n, pre) =>
     n.c.forEach((c, i) => {
       const s = pre ? pre + '.' + (i + 1) : '' + (i + 1);
-      num.set(c, s);
+      num.set(c, '' + (i + 1));
+      paths.set(c, s);
       nn(c, s);
     });
   roots().forEach((R) => nn(R, ''));
@@ -117,6 +123,14 @@ function paint(P, colr) {
       }
   }
   svg.innerHTML = d;
+  const sp = sel && P.get(sel),
+    pt = paths.get(sel);
+  pathEl.style.display = numbered && sp && pt && pt.includes('.') && !editing ? 'block' : 'none';
+  if (sp) {
+    pathEl.textContent = pt;
+    pathEl.style.left = sp.x + 'px';
+    pathEl.style.top = sp.y - 24 + 'px';
+  }
 }
 function glide(colr) {
   cancelAnimationFrame(raf);
