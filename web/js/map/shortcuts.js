@@ -58,6 +58,7 @@ function nav(k) {
 addEventListener('keydown', (ev) => {
   if (editing) return;
   const k = ev.key;
+  if (k !== 'Enter' && !/^(Shift|Meta|Control|Alt)$/.test(k)) committed = null; // any other key breaks the Enter, Enter chain
   if ((ev.metaKey || ev.ctrlKey) && k.toLowerCase() === 'b') {
     ev.preventDefault();
     document.body.classList.toggle('nosb');
@@ -111,9 +112,9 @@ addEventListener('keydown', (ev) => {
   } else if (k === 'Enter') {
     ev.preventDefault();
     if (ev.metaKey || ev.ctrlKey) subject();
+    else if (committed === sel && !ev.shiftKey) sibling();
     else edit(sel, true), ev.shiftKey && newline(sel);
-  }
-  else if (k === 'F2') {
+  } else if (k === 'F2') {
     ev.preventDefault();
     edit(sel);
   } else if (k === 'Delete' || k === 'Backspace') {
