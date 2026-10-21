@@ -6,9 +6,7 @@
   display: flex;
   gap: 8px;
 }
-#bn,
-#bb,
-#bh {
+#bmenu {
   background: rgba(19, 22, 27, 0.85);
   backdrop-filter: blur(6px);
   color: #b9c1cf;
@@ -20,16 +18,45 @@
   font-size: 12px;
   transition: all 0.15s;
 }
-#bn:hover,
-#bb:hover,
-#bh:hover {
+#bmenu:hover,
+#tools.open #bmenu {
   border-color: #2e3542;
   color: #fff;
 }
-#bn.on {
-  background: #1d2740;
-  border-color: var(--acc);
+#tmenu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 150px;
+  flex-direction: column;
+  padding: 4px;
+  background: #13161b;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+#tools.open #tmenu {
+  display: flex;
+}
+#tmenu button {
+  background: none;
+  color: #b9c1cf;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+#tmenu button:hover {
+  background: #1d2230;
   color: #fff;
+}
+#bn.on::after {
+  content: ' ✓';
+  color: var(--acc);
 }
 #lock {
   position: absolute;
