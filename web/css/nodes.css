@@ -129,13 +129,21 @@ body.dragging * {
 .n.tmr {
   animation: tmr-breathe 6s ease-in-out infinite;
 }
-.n.flash,
+.n.flash {
+  animation: flash-calm 3.2s ease-in-out infinite;
+}
 .n.tdone {
   animation: tmr-blink 1.6s ease-in-out infinite;
 }
 @keyframes tmr-breathe {
   50% {
     opacity: 0.45;
+  }
+}
+@keyframes flash-calm {
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 10px 1px color-mix(in srgb, var(--acc) 55%, transparent);
   }
 }
 @keyframes tmr-blink {
