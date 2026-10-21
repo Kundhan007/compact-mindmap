@@ -117,7 +117,7 @@ addEventListener('keydown', (ev) => {
   } else if (k === 'Delete' || k === 'Backspace') {
     ev.preventDefault();
     del();
-  } else if (k === ' ' || ((ev.metaKey || ev.ctrlKey) && k.toLowerCase() === 'm')) {
+  } else if (k === ' ' || k === '-' || ((ev.metaKey || ev.ctrlKey) && k.toLowerCase() === 'm')) {
     ev.preventDefault();
     if (sel.c.length) {
       sel.col = !sel.col;
