@@ -6,7 +6,6 @@ let hover = null; // node under the pointer
 function build() {
   for (const e of els.values()) e.remove();
   els.clear();
-  hover = null;
   const w = (n) => {
     const e = document.createElement('div');
     e.className = 'n';
@@ -34,13 +33,28 @@ function build() {
       if (hover === n) hover = null;
       showPath();
     };
+    e.node = n;
     world.appendChild(e);
     els.set(n, e);
     if (!n.col) n.c.forEach(w);
   };
   roots().forEach(w);
+  if (!els.has(hover)) hover = null;
   place();
 }
+// the pointer's node, kept right across rebuilds (a node rebuilt under a still pointer gets no mouseenter)
+stage.addEventListener('mousemove', (ev) => {
+  const t = ev.target.closest && ev.target.closest('.n'),
+    n = t ? t.node : null;
+  if (n !== hover) {
+    hover = n;
+    showPath();
+  }
+});
+stage.addEventListener('mouseleave', () => {
+  hover = null;
+  showPath();
+});
 function place() {
   hideDots();
   // numbering is display-only: a node shows its place among siblings (data-num -> CSS ::before),
