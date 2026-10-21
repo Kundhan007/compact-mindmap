@@ -11,30 +11,18 @@ function build() {
     const e = document.createElement('div');
     e.className = 'n';
     e.textContent = n.t;
-    let was = false; // click on an already-selected node edits it
     e.onmousedown = (ev) => {
       ev.stopPropagation();
       dragMoved = false;
-      was = sel === n && !editing;
       select(n);
       if ((ev.metaKey || ev.ctrlKey || isRoot(n)) && editing !== n) {
         // Cmd/Ctrl+drag any node, or plain drag a subject's root, moves the whole subject
         const r = rootOf(n);
-        if (ev.metaKey || ev.ctrlKey) was = false;
         subjDrag = { r, x: ev.clientX, y: ev.clientY, ox: r.ox || 0, oy: r.oy || 0, on: false };
       } else if (editing !== n && !isRoot(n) && ev.button === 0)
         dragInit = { n, x: ev.clientX, y: ev.clientY };
     };
-    e.onclick = () => {
-      if (dragMoved) {
-        dragMoved = false;
-        return;
-      }
-      if (was && !editing) {
-        was = false;
-        edit(n);
-      }
-    };
+    e.onclick = () => (dragMoved = false);
     e.ondblclick = () => {
       if (editing !== n) edit(n);
     };

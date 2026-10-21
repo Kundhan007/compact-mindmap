@@ -58,7 +58,6 @@ function nav(k) {
 addEventListener('keydown', (ev) => {
   if (editing) return;
   const k = ev.key;
-  if (k !== 'Enter' && !/^(Shift|Meta|Control|Alt)$/.test(k)) committed = null; // any other key breaks the Enter, Enter chain
   if ((ev.metaKey || ev.ctrlKey) && k.toLowerCase() === 'b') {
     ev.preventDefault();
     document.body.classList.toggle('nosb');
@@ -111,12 +110,10 @@ addEventListener('keydown', (ev) => {
     ev.shiftKey ? nav('Parent') : child();
   } else if (k === 'Enter') {
     ev.preventDefault();
+    // only Shift+Enter (or a double-click) edits; plain Enter adds a sibling
     if (ev.metaKey || ev.ctrlKey) subject();
-    else if (committed === sel && !ev.shiftKey) sibling();
-    else edit(sel, true), ev.shiftKey && newline(sel);
-  } else if (k === 'F2') {
-    ev.preventDefault();
-    edit(sel);
+    else if (ev.shiftKey) edit(sel, true);
+    else sibling();
   } else if (k === 'Delete' || k === 'Backspace') {
     ev.preventDefault();
     del();
@@ -131,7 +128,7 @@ addEventListener('keydown', (ev) => {
     nav(k);
   } else if (k === '0' && !ev.metaKey && !ev.ctrlKey) {
     fit();
-  } // letters are commands (f, t…); Enter edits the text
+  } // letters are commands (f, t…)
 });
 
 const outline = (n, d = 0) =>
