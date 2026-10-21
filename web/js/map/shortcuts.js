@@ -120,7 +120,7 @@ addEventListener('keydown', (ev) => {
   } else if (k === 'Delete' || k === 'Backspace') {
     ev.preventDefault();
     del();
-  } else if (k === ' ') {
+  } else if (k === ' ' || ((ev.metaKey || ev.ctrlKey) && k.toLowerCase() === 'm')) {
     ev.preventDefault();
     if (sel.c.length) {
       sel.col = !sel.col;
