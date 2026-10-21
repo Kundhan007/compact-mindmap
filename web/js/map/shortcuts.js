@@ -119,8 +119,9 @@ addEventListener('keydown', (ev) => {
     del();
   } else if (k === ' ' || k === '-' || ((ev.metaKey || ev.ctrlKey) && k.toLowerCase() === 'm')) {
     ev.preventDefault();
-    if (sel.c.length) {
-      sel.col = !sel.col;
+    const n = hover || sel; // the hovered node first
+    if (n.c.length) {
+      n.col = !n.col;
       build();
     }
   } else if (k.startsWith('Arrow')) {
