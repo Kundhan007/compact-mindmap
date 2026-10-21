@@ -112,6 +112,37 @@ body.dragging * {
   border-radius: 6px;
   font-variant-numeric: tabular-nums;
 }
+#tmin {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  white-space: pre;
+  font-size: 11px;
+  line-height: 18px;
+  padding: 0 7px;
+  color: #cfd6e4;
+  background: #1b1f27;
+  border: 1px solid var(--acc);
+  border-radius: 6px;
+}
+.n.tmr {
+  animation: tmr-breathe 6s ease-in-out infinite;
+}
+.n.tdone {
+  animation: tmr-blink 1.6s ease-in-out infinite;
+}
+@keyframes tmr-breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes tmr-blink {
+  50% {
+    opacity: 0.25;
+    box-shadow: 0 0 14px 3px var(--acc);
+  }
+}
 #dots {
   position: absolute;
   left: 0;

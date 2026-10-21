@@ -111,6 +111,8 @@ function paint(P, colr) {
     e.classList.toggle('sel', n === sel);
     e.classList.toggle('col', n.col && n.c.length > 0);
     e.classList.toggle('root', isRoot(n));
+    e.classList.toggle('tmr', !!n.tm && !n.tm.fired);
+    e.classList.toggle('tdone', !!n.tm && !!n.tm.fired && !n.tm.seen);
     if (k) {
       e.style.borderColor = k;
       e.style.background = `color-mix(in srgb, ${k} 16%, #1b1e24)`;

@@ -23,6 +23,7 @@ function reveal() {
 }
 function select(n) {
   sel = n;
+  if (n.tm && n.tm.fired) n.tm.seen = true; // a finished timer stops blinking once looked at
   place();
   reveal();
 }
