@@ -54,6 +54,35 @@
   background: #1d2230;
   color: #fff;
 }
+#cheat {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  padding: 8px 12px;
+  background: #13161b;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+  white-space: nowrap;
+}
+#tools.cheat #cheat {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 4px 14px;
+}
+#cheat div {
+  display: contents;
+}
+#cheat b {
+  color: #fff;
+  font-weight: 600;
+}
+#cheat i {
+  color: #b9c1cf;
+  font-style: normal;
+}
 #bn.on::after {
   content: ' ✓';
   color: var(--acc);

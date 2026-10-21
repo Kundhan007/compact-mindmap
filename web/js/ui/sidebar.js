@@ -182,8 +182,11 @@ $('#bn').onclick = () => {
 // toolbar dropdown: open on click, close after a choice, an outside click or Escape
 $('#bmenu').onclick = (e) => {
   e.stopPropagation();
+  $('#tools').classList.remove('cheat');
   $('#tools').classList.toggle('open');
 };
 $('#tmenu').onclick = () => $('#tools').classList.remove('open');
-addEventListener('mousedown', (e) => !$('#tools').contains(e.target) && $('#tools').classList.remove('open'));
-addEventListener('keydown', (e) => e.key === 'Escape' && $('#tools').classList.remove('open'));
+$('#bk').onclick = () => setTimeout(() => $('#tools').classList.add('cheat'));
+const shut = () => $('#tools').classList.remove('open', 'cheat');
+addEventListener('mousedown', (e) => !$('#tools').contains(e.target) && shut());
+addEventListener('keydown', (e) => e.key === 'Escape' && shut());
