@@ -1,9 +1,7 @@
 // Node editing: edit/finish, add child/sibling, delete.
 const clean0 = (t) => t.replace(/\u200b/g, '');
-let committed = null; // node just left with Enter: the next Enter adds a sibling instead of editing
 function edit(n, atEnd) {
   editing = n;
-  committed = null;
   showPath();
   const e = els.get(n);
   e.contentEditable = 'plaintext-only';
@@ -30,7 +28,6 @@ function edit(n, atEnd) {
       ev.preventDefault();
       finish();
       e.blur();
-      if (sel === n) committed = n; // an emptied node is dropped by finish(), nothing to continue from
     } else if (ev.key === 'Tab') {
       ev.preventDefault();
       finish();
@@ -48,9 +45,8 @@ function edit(n, atEnd) {
       p.c.splice(i, 1);
       let t = p.c[i - 1];
       while (t && !t.col && t.c.length) t = t.c[t.c.length - 1];
-      sel = t || p;
+      sel = t || p; // selected, not edited
       build();
-      edit(sel, true);
       reveal();
     } else if (ev.key.startsWith('Arrow') && !ev.shiftKey && !ev.metaKey && !ev.altKey) {
       const s = getSelection(),
