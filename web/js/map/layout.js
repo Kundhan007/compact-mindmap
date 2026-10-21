@@ -112,6 +112,7 @@ function paint(P, colr) {
     e.classList.toggle('col', n.col && n.c.length > 0);
     e.classList.toggle('root', isRoot(n));
     e.classList.toggle('tmr', !!n.tm && !n.tm.fired);
+    e.classList.toggle('flash', !!n.flash);
     e.classList.toggle('tdone', !!n.tm && !!n.tm.fired && !n.tm.seen);
     if (k) {
       e.style.borderColor = k;

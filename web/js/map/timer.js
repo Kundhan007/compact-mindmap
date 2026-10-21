@@ -1,4 +1,4 @@
-// Silent timers: select a node, type t, the minutes, Enter -> a timer leaf under it.
+// Letter commands on the selected node: f flashes it, t5t (or t5 Enter) adds a silent 5 min timer leaf.
 // It breathes slowly while running; when done a silent notification is sent and it blinks until selected.
 const tmEl = Object.assign(document.createElement('div'), { id: 'tmin' });
 world.appendChild(tmEl);
@@ -8,7 +8,7 @@ function tmShow() {
   const p = tmBuf !== null && sel && pos.get(sel);
   tmEl.style.display = p ? 'block' : 'none';
   if (!p) return;
-  tmEl.textContent = `⏱ ${tmBuf || '_'} min  ⏎`;
+  tmEl.textContent = `⏱ t${tmBuf || '_'}t  minutes, then t`;
   tmEl.style.left = p.x + 'px';
   tmEl.style.top = p.y + p.h + 6 + 'px';
 }
@@ -52,24 +52,21 @@ addEventListener(
     if (editing || !loaded || !cur || !root || !sel || ev.metaKey || ev.ctrlKey || ev.altKey) return;
     const k = ev.key;
     if (tmBuf === null) {
-      if (k !== 't') return;
-      tmBuf = '';
+      if (k === 'f') {
+        sel.flash = !sel.flash || undefined; // flash: the node blinks until f is pressed again
+        build();
+      } else if (k === 't') tmBuf = '';
+      else return;
     } else if (/^\d$/.test(k)) tmBuf += k;
     else if (k === 'Backspace') tmBuf ? (tmBuf = tmBuf.slice(0, -1)) : tmEnd();
-    else if (k === 'Enter') {
+    else if (k === 't' || k === 'Enter') {
+      // t5t or t5 Enter
       const m = +tmBuf;
       tmEnd();
       if (m > 0) addTimer(sel, m);
     } else if (k === 'Escape') tmEnd();
     else if (k === 'Shift') return;
-    else {
-      // not a timer after all: type "t…" and this key into the node, as plain typing would
-      const had = tmBuf;
-      tmEnd();
-      sel.t = 't' + had;
-      edit(sel, true);
-      return;
-    }
+    else return tmEnd(); // any other key cancels and does its usual job
     ev.preventDefault();
     ev.stopImmediatePropagation();
     tmShow();

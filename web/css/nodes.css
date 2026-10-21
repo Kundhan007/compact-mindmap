@@ -129,6 +129,7 @@ body.dragging * {
 .n.tmr {
   animation: tmr-breathe 6s ease-in-out infinite;
 }
+.n.flash,
 .n.tdone {
   animation: tmr-blink 1.6s ease-in-out infinite;
 }
