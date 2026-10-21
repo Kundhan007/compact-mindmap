@@ -91,6 +91,13 @@ fn main() {
                     println!("{}", m["t"].as_str().unwrap_or(""));
                     (true, Value::Null)
                 }
+                "notify" => {
+                    // silent: no "sound name" given
+                    let t = m["t"].as_str().unwrap_or("").replace('\\', "").replace('"', "'");
+                    let s = format!("display notification \"{t}\" with title \"Mindmap\"");
+                    std::thread::spawn(move || std::process::Command::new("osascript").args(["-e", &s]).status());
+                    return;
+                }
                 "quit" => {
                     let _ = ipc_proxy.send_event(Msg::Quit);
                     return;
