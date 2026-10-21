@@ -9,10 +9,14 @@ function hideDots() {
 function dotAction(n, type, side) {
   if (!isRoot(n) && !parentOf(n)) return;
   sel = n;
-  if (type === 'child') child(side);
+  if (type === 'fold') {
+    n.col = !n.col;
+    build();
+  } else if (type === 'child') child(side);
   else if (type === 'before') siblingBefore();
   else sibling();
 }
+const below = (n) => n.c.reduce((a, c) => a + 1 + below(c), 0);
 function showDots(n) {
   if (dotNode === n) return;
   hideDots();
@@ -24,6 +28,18 @@ function showDots(n) {
     col = lastColr.get(n) || '#7aa8ff',
     o = 13,
     list = [];
+  if (n.c.length) {
+    // fold badge: how many nodes hang below; click hides / shows them (same as Space)
+    const out = isRoot(n) ? 0 : side === 'l' ? -1 : 1;
+    list.push({
+      x: out ? (out > 0 ? p.x + w + o : p.x - o) : p.x + w / 2, // in the gap to the children, above the add-child dot
+      y: out ? cy - 15 : p.y - o + 3,
+      t: 'fold',
+      txt: below(n),
+      tip: n.col ? 'Show the nodes below' : 'Hide the nodes below',
+      con: n.col,
+    });
+  }
   if (isRoot(n)) {
     list.push({
       x: p.x - o,
@@ -56,7 +72,8 @@ function showDots(n) {
   }
   for (const d of list) {
     const e = document.createElement('div');
-    e.className = 'dot' + (d.t === 'link' ? ' link' : d.con ? ' con' : '');
+    e.className = 'dot' + (d.t === 'link' ? ' link' : d.con ? ' con' : '') + (d.t === 'fold' ? ' fold' : '');
+    if (d.txt !== undefined) e.textContent = d.txt;
     e.style.left = d.x + 'px';
     e.style.top = d.y + 'px';
     e.style.setProperty('--c', col);
@@ -90,7 +107,7 @@ stage.addEventListener('mousemove', (ev) => {
       dx = Math.max(p.x - wx, 0, wx - (p.x + w)),
       dy = Math.max(p.y - wy, 0, wy - (p.y + p.h));
     if (dx <= m && dy <= m) {
-      const d = dx * dx + dy * dy;
+      const d = (dx * dx + dy * dy) * (n === dotNode ? 0.5 : 1); // the node whose dots are showing wins ties, so its dots stay reachable next to its children
       if (d < bd) {
         bd = d;
         best = n;
