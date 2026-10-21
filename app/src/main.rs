@@ -168,7 +168,7 @@ fn menu() {
     let win = Submenu::with_items(
         "Window",
         true,
-        &[&P::minimize(None), &P::maximize(None), &P::fullscreen(None), &P::close_window(None)],
+        &[&P::maximize(None), &P::fullscreen(None), &P::close_window(None)], // no Minimize: Cmd+M folds a node in the page
     )
     .unwrap();
     m.append_items(&[&app, &edit, &win]).unwrap();
