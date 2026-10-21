@@ -131,10 +131,7 @@ addEventListener('keydown', (ev) => {
     nav(k);
   } else if (k === '0' && !ev.metaKey && !ev.ctrlKey) {
     fit();
-  } else if (k.length === 1 && !ev.metaKey && !ev.ctrlKey && !ev.altKey) {
-    sel.t = '';
-    edit(sel);
-  }
+  } // letters are commands (f, t…); Enter edits the text
 });
 
 const outline = (n, d = 0) =>
